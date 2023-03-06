@@ -140,10 +140,12 @@ void command_alldist(string refList, string outputFile, kssd_parameter_t kssd_pa
 	if(isSketchFile(refList)){
 		refSketchOut = refList;
 		readSketches(sketches, info, refList);
+		bool use64 = info.half_k - info.drlevel > 8 ? true : false;
+		int component_num = use64 ? 1 << (4 * (info.half_k - info.drlevel - 8)) : 0;
 		kmer_size = info.half_k * 2;
 		string indexFile = refSketchOut + ".index";
 		string dictFile = refSketchOut + ".dict";
-		if(!existFile(indexFile) || !existFile(dictFile)){
+		if(!existFile(indexFile, component_num) || !existFile(dictFile, component_num)){
 			transSketches(sketches, info, dictFile, indexFile, threads);
 		}
 		t3 = get_sec();
@@ -170,7 +172,7 @@ void command_alldist(string refList, string outputFile, kssd_parameter_t kssd_pa
 
 	//compute the pair distance
 	//tri_dist(sketches, outputFile, kmer_size, maxDist, threads);
-	index_tridist(sketches, refSketchOut, outputFile, kmer_size, maxDist, isContainment, threads);
+	index_tridist(sketches, info, refSketchOut, outputFile, kmer_size, maxDist, isContainment, threads);
 
 }
 
@@ -191,7 +193,7 @@ void command_dist(string refList, string queryList, string outputFile, kssd_para
 		kmer_size = ref_info.half_k * 2;
 		string indexFile = refSketchOut + ".index";
 		string dictFile = refSketchOut + ".dict";
-		if(!existFile(indexFile) || !existFile(dictFile)){
+		if(!existFile(indexFile, 0) || !existFile(dictFile, 0)){
 			transSketches(ref_sketches, ref_info, dictFile, indexFile, threads);
 		}
 		cerr << "the ref_sketch size is: " << ref_sketches.size() << endl;

@@ -22,6 +22,7 @@ typedef struct sketch
 	string comment;
 	int id;
 	vector<uint32_t> hashSet;
+	vector<uint64_t> hashSet64;
 
 } sketch_t;
 
@@ -47,7 +48,7 @@ typedef struct co_dirstat
 } co_dstat_t;
 
 
-bool existFile(string fileName);
+bool existFile(string fileName, int component_num);
 bool isFastaList(string inputList);
 bool isFastqList(string inputList);
 
